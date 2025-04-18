@@ -45,10 +45,10 @@ st.markdown("""
 """)
 
 amount_usd = 100000
-months = st.slider("Срок владения облигацией (мес.)", min_value=1, max_value=12, value=6, step=1)
-initial_exchange_rate = st.slider("Курс покупки (₽)", 80.0, 120.0, 82.5, 0.5)
-exchange_rate = st.slider("Курс продажи (₽)", 80.0, 120.0, 90.0, 0.5)
-coupon_rate = st.slider("Купон (%)", 1.0, 15.0, 8.25, 0.05)
+months = months = st.number_input("Срок владения облигацией (мес.)", min_value=1, max_value=12, value=6, step=1)
+initial_exchange_rate = st.number_input("Курс покупки (₽)", min_value=80.0, max_value=120.0, value=82.5, step=0.5)
+exchange_rate = st.number_input("Курс продажи (₽)", min_value=80.0, max_value=120.0, value=90.0, step=0.5)
+coupon_rate = st.number_input("Купон (%)", min_value=1.0, max_value=15.0, value=8.25, step=0.05)
 
 purchase_price_rub = amount_usd * initial_exchange_rate
 sale_price_rub = amount_usd * exchange_rate
@@ -64,18 +64,18 @@ net_profit = profit_before_tax - coupon_tax - currency_tax
 annualized_return_before_tax = (profit_before_tax / purchase_price_rub) * (12 / months) * 100
 annualized_net_return = (net_profit / purchase_price_rub) * (12 / months) * 100
 
-result_df = pd.DataFrame({
+result_df = pd.DataFrame.from_dict({
     "Срок владения (мес.)": [months],
     "Купон (%)": [f"{coupon_rate:.2f}"],
     "НКД (₽)": [f"{nkd_rub:.2f}"],
     "Доходность до налогов (%)": [f"{annualized_return_before_tax:.2f}"],
     "Чистая доходность (%)": [f"{annualized_net_return:.2f}"]
-})
+}, orient="index", columns=["Значение"])
 
 st.markdown("<h4 style='padding-top: 20px;'>Результаты расчета:</h4>", unsafe_allow_html=True)
 st.dataframe(result_df.style.set_properties(**{
     'text-align': 'center'
-}).set_table_styles([{
+}, orient="index", columns=["Значение"]).set_table_styles([{
     'selector': 'th',
     'props': [('text-align', 'center')]
 }]), use_container_width=True)
